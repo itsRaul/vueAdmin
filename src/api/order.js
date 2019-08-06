@@ -136,3 +136,11 @@ export const orderShip = ({deliveryCode,deliveryCorpId,deliveryCorpName,orderId}
     }
     return http.post('/order/ship',data)
 }
+
+
+export const test2 = ({orderCode}) => {
+    let params = {
+        client_id,client_secret,sign,timestamp,v,orderCode
+    }
+    return http.get('/order/list',{params})
+}

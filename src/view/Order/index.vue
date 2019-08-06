@@ -58,12 +58,12 @@
                                         </el-col>
                                         <el-col :span="14">
                                             <el-select v-model="status" clearable placeholder="请选择">
-                                                <el-option value="1" label="待付款"></el-option>
-                                                <el-option value="2" label="待发货"></el-option>
-                                                <el-option value="3" label="已发货"></el-option>
-                                                <el-option value="4" label="已完成"></el-option>
-                                                <el-option value="5" label="已关闭"></el-option>
-                                                <el-option value="6" label="退款中"></el-option>
+                                                <el-option value="WAIT_PAY" label="待付款"></el-option>
+                                                <el-option value="WAIT_SHIP" label="待发货"></el-option>
+                                                <el-option value="WAIT_RECEIVING" label="已发货"></el-option>
+                                                <el-option value="SUCCESS" label="已完成"></el-option>
+                                                <el-option value="CLOSED" label="已关闭"></el-option>
+                                                <el-option value="RETURN" label="退款中"></el-option>
                                             </el-select>
                                         </el-col>
                                     </el-col>
@@ -73,8 +73,8 @@
                                         </el-col>
                                         <el-col :span="14">
                                             <el-select v-model="types" clearable placeholder="请选择">
-                                                <el-option value="1" label="快速上门发货"></el-option>
-                                                <el-option value="2" label="上门自提"></el-option>
+                                                <el-option value="EXPRESS" label="快速上门发货"></el-option>
+                                                <el-option value="SELF_TAKING" label="上门自提"></el-option>
                                             </el-select>
                                         </el-col>
                                     </el-col>
@@ -93,11 +93,11 @@
                                             付款方式：
                                         </el-col>
                                         <el-col :span="14">
-                                            <el-select v-model="deliveryType" clearable placeholder="请选择">
-                                                <el-option value="1" label="微信支付"></el-option>
-                                                <el-option value="2" label="支付宝支付"></el-option>
-                                                <el-option value="3" label="线下支付"></el-option>
-                                                <el-option value="4" label="银行卡付款"></el-option>
+                                            <el-select v-model="payType" clearable placeholder="请选择">
+                                                <el-option value="WXPAY" label="微信支付"></el-option>
+                                                <el-option value="ALIPAY" label="支付宝支付"></el-option>
+                                                <!-- <el-option value="3" label="线下支付"></el-option>
+                                                <el-option value="4" label="银行卡付款"></el-option> -->
                                             </el-select>
                                         </el-col>
                                     </el-col>
@@ -107,7 +107,7 @@
                                             
                                         </el-col>
                                         <el-col :span="14">
-                                            <el-button type="primary" @click="orderSearch">搜索</el-button>
+                                            <el-button type="primary" @click.native="orderSearch">搜索</el-button>
                                         </el-col>
                                     </el-col>
                                 </el-col>
@@ -130,7 +130,7 @@
                                     <el-col class="list-item">
                                         <el-col class="table-header">
                                             <el-col :span="12">
-                                                <el-col :span="12">订单号：<span @click="gotoDetails(order.orderId)" class="order-code">{{order.orderCode}}</span></el-col>
+                                                <el-col :span="12">订单号：<span @click="toOrderDetail(order)" class="order-code">{{order.orderCode}}</span></el-col>
                                                 <el-col :span="12" class="header-text">下单时间：{{orderCreateTime(order.createTime)}}</el-col>
                                             </el-col>
                                             <el-col :span="3" class="header-center" style="opacity: 0;">1</el-col>
@@ -162,7 +162,6 @@
                                             </el-col>
                                             <el-col :span="3" class="product-item">
                                                 <el-col>{{order.buyer}}</el-col>
-                                                <el-col>zhangsan</el-col>
                                             </el-col>
                                             <div class="right-border"></div>
                                             <el-col :span="3" class="product-item">
@@ -171,10 +170,17 @@
                                             </el-col>
                                             <div class="right-border"></div>
                                             <el-col :span="3" class="product-item">
-                                                <el-col>{{order.orderStatusName}}</el-col>
-                                                <el-col v-if="order.orderStatusName=='待发货'" style="cursor: pointer;" @click.native="onShipping(order)">发货</el-col>
+                                                <el-col v-if="order.orderStatus=='WAIT_PAY'">待付款</el-col>
+                                                <el-col v-else-if="order.orderStatus=='WAIT_RECEIVING'">已发货</el-col>
+                                                <el-col v-else-if="order.orderStatus=='WAIT_SHIP'" style="cursor: pointer;" @click.native="onShipping(order)">待发货</el-col>
+                                                <el-col v-else-if="order.orderStatus=='SUCCESS'">已完成</el-col>
+                                                <el-col v-else-if="order.orderStatus=='CLOSED'">已关闭</el-col>
+                                                <el-col v-else-if="order.orderStatus=='RETURN'">退款中</el-col>
                                             </el-col>
                                             <div class="right-border"></div>
+                                                <el-col :span="3" class="product-item">
+                                                <div>测试，待调试</div>
+                                            </el-col>
                                         </el-col>
                                     </el-col>
                                 </el-col>
@@ -220,7 +226,7 @@
                                 </span>
                             </el-dialog>
                             
-                            <!--<el-col class="pagination">
+                            <!-- <el-col class="pagination">
                                 <el-pagination
                                     background
                                     @size-change="handleSizeChange"
@@ -229,8 +235,8 @@
                                     :total="totalPage"
                                     :page-size="total">
                                 </el-pagination>
-                            </el-col>
-                            -->
+                            </el-col> -->
+                           
                         </el-col>
                     </el-col>
                 </el-tab-pane>
@@ -246,7 +252,7 @@
 </template>
 
 <script >
-import {getAllOderList,logisticsCorps,orderShip} from "../../api/order"
+import {getAllOderList,logisticsCorps,orderShip,test2} from "../../api/order"
 import {addressList,addressSetting} from 'api/setting'
 
 export default {
@@ -287,7 +293,7 @@ export default {
             status: '',
             types: '',
             tel: '',
-            deliveryType: '',
+            payType: '',
             totalPage: 100,
             total: 10,
             orderAllList: null,
@@ -302,18 +308,20 @@ export default {
             orderId: '',//订单ID
         }
     },
-    created() {
-        getAllOderList({}).then(res => {
-            if(res.data.code === "0") {
-                this.orderAllList = res.data.data.orders
-            }
-        })
-    },
     mounted() {
+        this._getAllOderList();
         this._logisticsCorps();
         this.getAddressList();
     },
     methods: {
+        //获取列表数据
+        _getAllOderList() {
+            getAllOderList({}).then(res => {
+                if(res.data.code === "0") {
+                    this.orderAllList = res.data.data.orders
+                }
+            })
+        },
         //详情页面
         toOrderDetail(row) {
             let orderId = row.orderId;
@@ -342,36 +350,41 @@ export default {
             })
             return sumPrice
         },
-        // 跳转到订单详情
-        gotoDetails(orderId) {
-            this.$router.push({
-            name: 'orderDetails',
-            params: {
-                orderId: orderId
-            }
-            })
+        fromDate(date) {
+            let current = new Date(date)
+            return current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate()
         },
+        //搜索查询
         orderSearch() {
-            function fromDate(date) {
-                let current = new Date(date)
-                return current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate()
-            }
+            // function fromDate(date) {
+            //     let current = new Date(date)
+            //     return current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate()
+            // }
 
             let obj = {
                 consignee: this.name,
                 deliveryType: this.deliveryType,
-                endTime: this.time[1]===undefined?'':fromDate(this.time[1]),
+                endTime: this.time[1]===undefined?'':this.fromDate(this.time[1]),
                 mobile: this.mobile,
                 orderCode: this.orderCode,
                 orderStatus: this.status,
                 deliveryTypeType: this.types,
-                startTime: this.time[0]===undefined?'':fromDate(this.time[0]),
+                startTime: this.time[0]===undefined?'':this.fromDate(this.time[0]),
 
             }
-            getAllOderList(obj).then(res => {
-                console.log(res)
+            let orderCode = this.orderCode;
+            let startTime = this.time[0]===undefined?'':this.fromDate(this.time[0]);
+            let endTime = this.time[1]===undefined?'':this.fromDate(this.time[1]);
+            let consignee = this.name;           
+            let orderStatus = this.status;          
+            let deliveryType = this.types;
+            let mobile = this.mobile; 
+            let payType = this.payType
+            getAllOderList({orderCode,startTime,endTime,consignee,orderStatus,deliveryType,mobile,payType}).then(res => {
+                if (res.data.code === '0') {
+                    this.orderAllList = res.data.data.orders
+                }
             })
-            console.log(this.time[1])
         },
         //获取物流公司
         _logisticsCorps() {
@@ -417,8 +430,17 @@ export default {
             let deliveryCorpId = this.deliverySelectVal;
             let deliveryCorpName = this.deliveryCorpName
             let orderId = this.orderId
-            orderShip({deliveryCode,deliveryCorpId,deliveryCorpName,orderId}).then( res => {
-                console.log(res)
+            orderShip({deliveryCode,deliveryCorpId,deliveryCorpName,orderId}).then( res => {              
+                if (res.data.code === '0') {                    
+                    this._getAllOderList();              
+                    this.$message({
+                        message: res.data.msg,
+                        type: 'success'
+                    });
+                     this.deliveryVisible = false; 
+                }else {
+                    this.$message.error(res.data.msg);
+                }
             })
         },
     }

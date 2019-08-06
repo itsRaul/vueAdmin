@@ -11,8 +11,9 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      //http://api.mikoo.net
       '*':{
-        target: 'http://api.mikoo.net', //测试
+        target: 'http://mallapi.puzhentech.com', //测试
         changeOrigin: true,
       },
     },
