@@ -415,7 +415,6 @@
                             this.$route.go(-1)
                         }
                     })
-                    console.log('修改')
                 }else {
                     if(bearFreight === 'PURCHASER') {
                         createTemplate({name,provinceId,cityId,districtId,bearFreight,uomType,rule}).then( res => {

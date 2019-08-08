@@ -142,6 +142,9 @@
     background-color: #f6f6f6; 
     min-height: 100%;
 }
+.side::-webkit-scrollbar { width: 0 !important }
+.side::-webkit-scrollbar { width: 0 !important }
+.side { overflow: -moz-scrollbars-none; }
 .side {
     width: 200px;
     background-color: #ffffff;
@@ -150,12 +153,10 @@
     left: 0;
     height: 100%;
     z-index: 1001;
-    overflow: hidden;
+    overflow: auto;
     transition: width .28s;
     border-right: 1px solid #f2f2f2;
     .side-view {
-        // overflow: scroll;
-        height: 100%;
        .title {
             width:60px;
             height: 60px;
@@ -213,8 +214,9 @@
 }
 .main {  
     margin-left: 200px;
-    height: 100%;  
+    // height: 100%;  
     transition: margin-left .28s;
     // overflow: scroll;
+    overflow: hidden;
 }
 </style>

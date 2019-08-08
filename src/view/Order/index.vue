@@ -179,13 +179,14 @@
                                             </el-col>
                                             <div class="right-border"></div>
                                                 <el-col :span="3" class="product-item">
-                                                <div>测试，待调试</div>
+                                                <div>{{order.buyerRemark}}</div>
                                             </el-col>
                                         </el-col>
                                     </el-col>
                                 </el-col>
                             </el-col>
 
+                            <!-- S 发货弹框 -->
                             <el-dialog
                                 title="发货"
                                 :visible.sync="deliveryVisible"
@@ -225,6 +226,7 @@
                                     <el-button type="primary" @click="_orderShip()">确 定</el-button>
                                 </span>
                             </el-dialog>
+                            <!-- E 发货弹框 -->
                             
                             <!-- <el-col class="pagination">
                                 <el-pagination
@@ -252,7 +254,7 @@
 </template>
 
 <script >
-import {getAllOderList,logisticsCorps,orderShip,test2} from "../../api/order"
+import {getAllOderList,logisticsCorps,orderShip} from "../../api/order"
 import {addressList,addressSetting} from 'api/setting'
 
 export default {
@@ -350,28 +352,13 @@ export default {
             })
             return sumPrice
         },
+        //时间格式化
         fromDate(date) {
             let current = new Date(date)
             return current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate()
         },
         //搜索查询
         orderSearch() {
-            // function fromDate(date) {
-            //     let current = new Date(date)
-            //     return current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate()
-            // }
-
-            let obj = {
-                consignee: this.name,
-                deliveryType: this.deliveryType,
-                endTime: this.time[1]===undefined?'':this.fromDate(this.time[1]),
-                mobile: this.mobile,
-                orderCode: this.orderCode,
-                orderStatus: this.status,
-                deliveryTypeType: this.types,
-                startTime: this.time[0]===undefined?'':this.fromDate(this.time[0]),
-
-            }
             let orderCode = this.orderCode;
             let startTime = this.time[0]===undefined?'':this.fromDate(this.time[0]);
             let endTime = this.time[1]===undefined?'':this.fromDate(this.time[1]);
@@ -388,11 +375,18 @@ export default {
         },
         //获取物流公司
         _logisticsCorps() {
-            logisticsCorps().then(res => {
-                if (res.data.code === '0') {
-                    this.deliveryOptions = res.data.data
-                }
-            })
+            let logisticsCorpsStorage = sessionStorage.getItem('logisticsCorps')
+            if (logisticsCorpsStorage) {
+                this.deliveryOptions = JSON.parse(logisticsCorpsStorage)
+            }else {
+                logisticsCorps().then(res => {
+                    if (res.data.code === '0') {
+                        this.deliveryOptions = res.data.data;
+                        sessionStorage.setItem('logisticsCorps',JSON.stringify(res.data.data));
+                    }
+                })
+            }
+            
         },
         //获取表格数据
         getAddressList() {
@@ -424,7 +418,7 @@ export default {
             });
             this.deliveryCorpName = obj.corpName
         },
-        //发货
+        //商品发货
         _orderShip() {
             let deliveryCode = this.deliveryInput;
             let deliveryCorpId = this.deliverySelectVal;
@@ -437,7 +431,7 @@ export default {
                         message: res.data.msg,
                         type: 'success'
                     });
-                     this.deliveryVisible = false; 
+                    this.deliveryVisible = false; 
                 }else {
                     this.$message.error(res.data.msg);
                 }

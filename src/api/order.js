@@ -44,20 +44,6 @@ export const createTemplate = ({name,provinceId,cityId,districtId,bearFreight,uo
 }
 
 /**
- *---------------------------------------------------------
- * @name: 物流模板修改
- * @description: 物流模板修改
- * 
- *---------------------------------------------------------
- */
-// export const modifyTemplate = () => {
-//     let data = {
-//         client_id,client_secret,sign,timestamp,v,name,province_id,city_id,district_id,bearFreight,uomType
-//     }
-//     return http.post('/logistics/template/modify',data)
-// }
-
-/**
 *---------------------------------------------------------
 * @name: 物流模板修改
 * @description: 物流模板修改
@@ -102,9 +88,9 @@ export const getAllOderList = ({consignee,deliveryType,endTime,mobile,orderCode,
  * 
  * @param {*} orderId 订单id 
  */
-export const getOrderIfo = ({orderId,reason}) => {
+export const getOrderIfo = ({orderId}) => {
   let params = {
-      client_id,client_secret,sign,timestamp,v,orderId,reason
+      client_id,client_secret,sign,timestamp,v,orderId
   }
   return http.get('/order/info',{params})
 }
@@ -132,15 +118,50 @@ export const logisticsCorps = () => {
 */
 export const orderShip = ({deliveryCode,deliveryCorpId,deliveryCorpName,orderId}) => {
     let data = {
-    client_id,client_secret,sign,timestamp,v,deliveryCode,deliveryCorpId,deliveryCorpName,orderId
+        client_id,client_secret,sign,timestamp,v,deliveryCode,deliveryCorpId,deliveryCorpName,orderId
     }
     return http.post('/order/ship',data)
 }
 
 
-export const test2 = ({orderCode}) => {
-    let params = {
-        client_id,client_secret,sign,timestamp,v,orderCode
+/**
+*---------------------------------------------------------
+* @name: 取消订单
+* @description: 取消订单
+* 
+*---------------------------------------------------------
+*/
+export const orderCancel = ({orderId,reason}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,orderId,reason
     }
-    return http.get('/order/list',{params})
+    return http.post('/order/cancel',data)
+}
+
+/**
+*---------------------------------------------------------
+* @name: 订单修改地址
+* @description: 订单修改地址
+* 
+*---------------------------------------------------------
+*/
+export const orderChangeAddress = ({orderId,consignee,mobile,telphone,provinceId,cityId,districtId,address,zipcode}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,orderId,consignee,mobile,telphone,provinceId,cityId,districtId,address,zipcode
+    }
+    return http.post('/order/changeAddress',data)
+}
+
+/**
+*---------------------------------------------------------
+* @name: 订单备注
+* @description: 订单备注
+* 
+*---------------------------------------------------------
+*/
+export const orderMemo = ({orderId,markColor,markName,markType='COLOR',memo}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,orderId,markColor,markName,markType,memo
+    }
+    return http.post('/order/memo',data)
 }
