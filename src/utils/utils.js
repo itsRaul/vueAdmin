@@ -7,7 +7,7 @@ export const deep = params => {
 
 
 /**
- * 存储localStorage
+ * @name 存储localStorage
  */
 export const setStore = (name, content) => {
 	if (!name) return;
@@ -18,7 +18,7 @@ export const setStore = (name, content) => {
 }
 
 /**
- * 获取localStorage
+ * @name 获取localStorage
  */
 export const getStore = name => {
 	if (!name) return;
@@ -26,9 +26,17 @@ export const getStore = name => {
 }
 
 /**
- * 删除localStorage
+ * @name 删除localStorage
  */
 export const removeStore = name => {
 	if (!name) return;
 	window.localStorage.removeItem(name);
+}
+
+/**
+ * @name 时间格式化
+ */
+export const fromDate = date  => {
+	let current = new Date(date)
+	return current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate()
 }

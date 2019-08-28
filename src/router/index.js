@@ -25,6 +25,7 @@ const GoodsDetail = () => import('view/Goods/GoodsDetail')
 const Order = () => import('view/Order')
 const OrderDetails = () => import('view/Order/OrderDetails')
 const AfterSale = () => import('view/Order/AfterSale')
+const AfterSaleDetail = () => import('view/Order/AfterSaleDetail')
 const Evaluation = () => import('view/Order/Evaluation')
 const EvaluationDetail = () => import('view/Order/EvaluationDetail')
 const Logistics = () => import('view/Order/Logistics')
@@ -251,6 +252,11 @@ export default new Router({
                     path: '/admin/orderDetails',
                     name: 'orderDetails',                
                     component: OrderDetails,
+                },
+                {
+                    path: '/admin/afterSaleDetail',
+                    name: 'afterSaleDetail',                
+                    component: AfterSaleDetail,
                 },
                 {
                     path: '/admin/evaluationDetail',

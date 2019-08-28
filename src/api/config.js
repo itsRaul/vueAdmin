@@ -1,6 +1,8 @@
 //生产环境上传图片url
-export const baseUrl = 'http://api.mikoo.net'
-// export const baseUrl = 'http://localhost:8080'
+// export const baseUrl = 'http://api.mikoo.net'
+
+//测试图片上传地址
+export const baseUrl = 'http://localhost:8080'
 
 export const client_id = 'dev'
 

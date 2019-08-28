@@ -198,10 +198,8 @@
     text-align: center;
     width: 100px;
     z-index: 1001;
-    background-color: #ffffff;
-   
-    border-right: 1px solid #f2f2f2;
-    
+    background-color: #ffffff;   
+    border-right: 1px solid #f2f2f2;  
     .move-nav-title {
         padding: 15px 0;
         border-bottom: 1px solid #f2f2f2;
@@ -213,10 +211,8 @@
     }
 }
 .main {  
-    margin-left: 200px;
-    // height: 100%;  
+    margin-left: 200px; 
     transition: margin-left .28s;
-    // overflow: scroll;
     overflow: hidden;
 }
 </style>

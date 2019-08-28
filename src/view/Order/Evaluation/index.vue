@@ -19,112 +19,99 @@
                                     :data="tableData"
                                     style="width: 100%">
                                     <el-table-column
-                                        prop="money"
                                         label="订单编号/商品">
-                                        <template :slot-scope="scope">
+                                        <template slot-scope="scope">
                                             <div>
-                                                <div>201710081641151235</div>
+                                                <div>{{scope.row.goods.featureCode}}</div>
                                                 <div class="product">
                                                     <div>
-                                                        <img src="../../../assets/img/logo.png" alt="" class="product-img">
+                                                        <img :src="scope.row.goods.imageUrl" alt="" class="product-img">
                                                     </div>
                                                     <div class="product-right">
-                                                        <div class="detail-text">欧式进口水晶玻璃杯水杯家用牛奶杯果汁杯6只装...</div>
+                                                        <div class="detail-text">{{scope.row.goods.goodsName}}</div>
                                                         <div class="text">
-                                                            颜色：白色  数量：6只装
+                                                            {{scope.row.goods.featureValue}}
                                                         </div>
-                                                        <div class="detail-text more-text" @click="toDetail()">更多评价（300）</div>
+                                                        <!-- <div class="detail-text more-text">更多评价（300）</div> -->
                                                     </div>
                                                 </div>
                                             </div>
                                         </template>
                                     </el-table-column>
                                     <el-table-column
-                                        prop="money"
                                         label="评价">
-                                        <template :slot-scope="scope">
+                                        <template slot-scope="scope">
                                             <div class="evaluation">
                                                 <div class="evaluation-top">
-                                                    <div>【好评】</div>
-                                                    <div>该商品不错，卖家人很好，发货速度很快，我喜欢 下次还会来来买</div>
+                                                    <div v-if="scope.row.score > 3">【好评】</div>
+                                                     <div v-else-if="scope.row.score == 3">【中评】</div>
+                                                     <div v-else-if="scope.row.score < 3">【差评】</div>
+                                                    <div>{{scope.row.content}}</div>
                                                 </div>
                                                 <div class="evaluation-img">
-                                                    <img src="../../../assets/img/logo.png" alt="">
-                                                    <img src="../../../assets/img/logo.png" alt="">
-                                                    <img src="../../../assets/img/logo.png" alt="">
-                                                    <img src="../../../assets/img/logo.png" alt="">
-                                                    <img src="../../../assets/img/logo.png" alt="">
+                                                    <span v-for="(item,index) in scope.row.imageUrls.split(',')" :key="index"> 
+                                                        <img :src="item" alt="">
+                                                    </span>
                                                 </div>
-                                                <div class="time">2017-10-01 22:12:23</div>
+                                                <div class="time">{{scope.row.createTime}}</div>
                                             </div>
                                         </template>
                                     </el-table-column>
                                     <el-table-column
-                                        prop="money"
                                         label="回复"
                                         width="200"
                                         align="center">
-                                        <template :slot-scope="scope">
-                                            <div>回复</div>
-                                            <div>感谢对本小店的认可，欢迎再次glin</div>
+                                        <template slot-scope="scope">
+                                            <div class="reply-text" @click="toDetail(scope.row)" v-if="scope.row.commentStatus === 'COMPLETE'">已回复</div>
+                                            <div class="reply-text" @click="toDetail(scope.row)" v-else>待回复</div>                                          
+                                            <div>{{scope.row.reply.content}}</div>
                                         </template>
                                     </el-table-column>
                                 </el-table>
                             </el-col>
-                            <el-col class="pagination">
-                                <el-pagination
-                                    background
-                                    @size-change="handleSizeChange"
-                                    @current-change="handleCurrentChange"
-                                    layout="prev, pager, next"
-                                    :total="totalPage"
-                                    :page-size="total">
-                                </el-pagination>
-                            </el-col>
                         </el-col>
                     </el-col>
                 </el-tab-pane>
-                <el-tab-pane label="好评" name="2"></el-tab-pane>
+                <!-- <el-tab-pane label="好评" name="2"></el-tab-pane>
                 <el-tab-pane label="中评" name="3"></el-tab-pane>
-                <el-tab-pane label="差评" name="4"></el-tab-pane>
+                <el-tab-pane label="差评" name="4"></el-tab-pane> -->
             </el-tabs>
         </div>
     </div>
 </template>
 
 <script >
+import {commentList} from 'api/order'
 
-    export default {
-        data() {
-            return {
-                activeName: '1',
-                totalPage: 100,
-                total: 10,
-                tableData: [{
-                    id:'336857312',
-                    money: '1000.00',
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }]//测试数据
+export default {
+    data() {
+        return {
+            activeName: '1',
+            tableData: []
+        }
+    },
+    mounted() {
+        this.getCommentList()
+    },
+    methods: {
+        //跳转详情页面
+        toDetail(row) {
+            let commentId = row.commentId
+            this.$router.push({path:'/admin/evaluationDetail',query:{commentId}})
+        },
+        //获取评价管理列表
+        async getCommentList() {
+            try {
+                let res = await commentList()
+                if (res.data.code === '0') {
+                    this.tableData = res.data.data.datas
+                }             
+            } catch (error) {
+                console.log(error)
             }
-        },
-        mounted() {
-        },
-
-        methods: {
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);               
-            },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            },
-            toDetail() {
-                this.$router.push({path:'/admin/evaluationDetail',query:{id:'3'}})
-            }
-            
-        },
-    }
+        },        
+    },
+}
 </script>
 
 
@@ -188,10 +175,14 @@
         .time {
             color: rgb(186, 186, 186); 
         }
-    }      
+    } 
+    .reply-text {
+        cursor: pointer;
+    }     
 }
 .pagination {
     text-align: right;
     padding: 15px 0;
 }
+
 </style>

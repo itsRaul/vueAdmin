@@ -204,3 +204,27 @@ html,body,#app {
 	background: #fff;
 	padding: 0 15px;
 }
+
+//css
+.layout-wrapper {
+    height: 100%;
+    .tabs-container {
+        height: 100%;
+        overflow: scroll;
+        .main-conainer {           
+            padding: 0 15px;
+            .content {
+                background: #ffffff;
+                padding: 15px;
+                border-radius: 4px;
+            }
+        }
+    }
+}
+.nav-bar {
+    height: 60px;
+    line-height: 60px;
+    background-color: #fefefe;
+    padding: 0 30px;
+} 
+

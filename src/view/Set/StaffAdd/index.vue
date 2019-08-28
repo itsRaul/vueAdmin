@@ -63,7 +63,7 @@
 
                 <div class="confirm">
                     <el-button type="primary" size="mini" @click="getStaffAdd()">保存</el-button>
-                    <el-button size="mini">取消</el-button>
+                    <el-button size="mini" @click="bank()">取消</el-button>
                 </div>
             </el-col>
         </div>
@@ -119,7 +119,10 @@ export default {
                      this.$message.error(res.data.msg);
                 }
             })
-        }
+        },
+        bank() {
+            this.$router.go(-1)
+        },
     },
 }
 </script>

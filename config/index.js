@@ -13,7 +13,8 @@ module.exports = {
     proxyTable: {
       //http://api.mikoo.net
       '*':{
-        target: 'http://mallapi.puzhentech.com', //测试
+       // target: 'http://mallapi.puzhentech.com', //测试
+        target: 'http://api.mikoo.net',
         changeOrigin: true,
       },
     },

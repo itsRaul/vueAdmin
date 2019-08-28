@@ -4,8 +4,8 @@ import { getStore } from './utils'
 
 //创建axios的基本配置
 const axios = _axios.create({
-    baseURL: 'http://api.mikoo.net', //测试
-    // baseURL: process.env.NODE_ENV=='development'?null:'http://api.mikoo.net',
+   // baseURL: 'http://api.mikoo.net', //测试
+    baseURL: process.env.NODE_ENV=='development'?null:'http://api.mikoo.net',
     transformRequest:[function(data){       
         data = qs.stringify(data);
         return data

@@ -19,40 +19,38 @@
                                 <el-col :span="12" class="main-left">
                                     <div class="product">
                                         <div class="product-img">
-                                            <img src="../../../assets/img/logo.png" alt="">
+                                            <img :src="goods.imageUrl" alt="">
                                         </div>
                                         <div class="detail-text">
-                                            <div>欧式进口水晶玻璃杯水杯家用牛奶杯果汁杯6只装...</div>
+                                            <div>{{goods.goodsName}}</div>
                                             <div>
-                                                <span>颜色：白色</span>
-                                                <span>数量：6只装</span>
+                                                {{goods.featureValue}}
                                             </div>
-                                            <div>¥43.50</div>
-                                            <div class="more-text">更多评价（300）</div>
+                                            <div>¥{{goods.goodsPrice}}</div>
+                                            <!-- <div class="more-text">更多评价（300）</div> -->
                                         </div>
                                     </div>
                                 </el-col>
-                                <el-col :span="12" class="main-right">
+                                <el-col :span="12" class="main-right" v-if="commentStatus != 'COMPLETE'">
                                     <div class="evaluation">
-                                        <div>2017-10-01 22:12:23</div>
-                                        <div>该商品不错，卖家人很好，发货速度很快，我喜欢 下次还会来来买</div>
+                                        <div>{{reply.createTime}}</div>
+                                        <div>{{reply.content}}</div>
                                         <div class="evaluation-img">
-                                            <img src="../../../assets/img/logo.png" alt="">
-                                            <img src="../../../assets/img/logo.png" alt="">
-                                            <img src="../../../assets/img/logo.png" alt="">
-                                            <img src="../../../assets/img/logo.png" alt="">
-                                            <img src="../../../assets/img/logo.png" alt="">
+                                            <img :src="item" alt="" v-for="(item,index) in imgs" :key="index">
                                         </div>
                                     </div>
                                     <div class="textarea">
+                                        <div class="score">
+                                            <el-rate v-model="score"></el-rate>
+                                        </div>
                                         <el-input
                                             type="textarea"
                                             :rows="6"
                                             placeholder="请输入内容"
-                                            v-model="textarea">
-                                        </el-input>
-                                        <div class="btn">
-                                            <el-button size="small">回复</el-button>
+                                            v-model="content">
+                                        </el-input>                                       
+                                       <div class="btn">
+                                            <el-button size="small" @click="onReply()">回复</el-button>
                                         </div>
                                     </div>
                                 </el-col>
@@ -65,22 +63,63 @@
     </div>
 </template>
 
-<script >
+<script>
+import {commentInfo,commentReply} from 'api/order'
 
-    export default {
-        data() {
-            return {
-                activeName: '1',
-                textarea: '',
+export default {
+    data() {
+        return {
+            activeName: '1',
+            content: '',
+            score: null,
+            goods: {},
+            reply: {},
+            imgs:null,
+            commentStatus:'',
+            
+        }
+    },
+    mounted() {
+        this.getCommentInfo()
+    },
+    methods: {
+        //获取评价管理详情
+        async getCommentInfo() {
+            let commentId = this.$route.query.commentId
+            try {
+                let res = await commentInfo({commentId})
+                if (res.data.code === '0') {
+                    this.goods = res.data.data.goods
+                    this.reply = res.data.data.reply
+                    this.imgs = res.data.data.imageUrls.split(',')
+                    this.commentStatus = res.data.data.commentStatus
+                }
+            } catch (error) {
+                console.log(error)
             }
         },
-        mounted() {
+        //回复
+        async onReply() {
+            let commentId = this.$route.query.commentId
+            let content = this.content
+            let score = this.score
+            try {
+                let res = await commentReply({commentId,content,score})
+                if (res.data.code === '0') {
+                    this.$message({
+                        message: res.data.msg,
+                        type: 'success'
+                    })
+                    this.$router.go(-1)
+                } else {
+                    this.$message.error(res.data.msg)
+                }
+            } catch (error) {
+                console.log(error)
+            }
         },
-
-        methods: {
-            
-        },
-    }
+    },
+}
 </script>
 
 
@@ -148,6 +187,9 @@
         }
         .textarea {
             margin-top: 15px;
+            .score {
+                padding:10px 0;
+            }
             .btn {
                 text-align: right;
                 padding: 10px 0;

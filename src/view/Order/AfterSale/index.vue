@@ -21,7 +21,7 @@
                                             订单号：
                                         </el-col>
                                         <el-col :span="16">
-                                            <el-input v-model="number"></el-input>
+                                            <el-input v-model="orderCode"></el-input>
                                         </el-col>
                                     </el-col>
                                 </el-col>
@@ -50,7 +50,7 @@
                                             退款编号：
                                         </el-col>
                                         <el-col :span="16">
-                                            <el-input v-model="id"></el-input>
+                                            <el-input v-model="returnsCode"></el-input>
                                         </el-col>
                                     </el-col>
                                     <el-col :span="9" class="search-item">
@@ -58,9 +58,9 @@
                                             退款类型：
                                         </el-col>
                                         <el-col :span="14">
-                                            <el-select v-model="pay" clearable placeholder="请选择">
-                                                <el-option value="1" label="售中退款"></el-option>
-                                                <el-option value="2" label="售后退款"></el-option>
+                                            <el-select v-model="returnsType" clearable placeholder="请选择">
+                                                <el-option value="PRE_SALE" label="售中退款"></el-option>
+                                                <el-option value="AFTER_SAL" label="售后退款"></el-option>
                                             </el-select>
                                         </el-col>
                                     </el-col>
@@ -82,15 +82,15 @@
                                             退款方式：
                                         </el-col>
                                         <el-col :span="16">
-                                            <el-select v-model="refund" clearable placeholder="请选择">
-                                                <el-option value="1" label="仅退款"></el-option>
-                                                <el-option value="2" label="退货退款"></el-option>
+                                            <el-select v-model="requestType" clearable placeholder="请选择">
+                                                <el-option value="REFUND" label="仅退款"></el-option>
+                                                <el-option value="RETURNS" label="退货退款"></el-option>
                                             </el-select>
                                         </el-col>
                                     </el-col>
                                     <el-col :span="9" class="search-item">
                                         <el-col :span="8" class="search-label">
-                                            退款类型：
+                                            退款状态：
                                         </el-col>
                                         <el-col :span="14">
                                             <el-select v-model="types" clearable placeholder="请选择">
@@ -103,99 +103,88 @@
                                             </el-select>
                                         </el-col>
                                     </el-col>
+                                    <el-col :span="6" class="search-item">
+                                        <el-col :span="9" class="search-label">
+                                            
+                                        </el-col>
+                                        <el-col :span="14">
+                                            <el-button type="primary" @click="serachReturnsList()">搜索</el-button>
+                                        </el-col>
+                                    </el-col>
                                 </el-col>
                             </el-col>
                             <!-- E 搜索条件 -->
 
                             <el-col class="table">
                                 <el-table
-                                    :data="tableData"
+                                    :data="ordersList"
                                     style="width: 100%">
                                     <el-table-column
-                                        prop="id"
-                                        label="退款编号"
+                                        prop="returnsCode"
+                                        label="退款编号"                                      
+                                        align="center">
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="requestTypeName"
+                                        label="退款方式"
                                         width="100"
                                         align="center">
                                     </el-table-column>
                                     <el-table-column
-                                        prop="money"
                                         label="订单编号/商品"
                                         align="center">
-                                        <template :slot-scope="scope">
+                                        <template slot-scope="scope">
                                             <div>
-                                                <div>201710081641151235</div>
+                                                <div>{{scope.row.orderCode}}</div>
                                                 <div class="product">
                                                     <div>
-                                                        <img src="../../../assets/img/logo.png" alt="" class="product-img">
+                                                        <img :src="scope.row.imageUrl" alt="" class="product-img">
                                                     </div>
                                                     <div>
-                                                        <div>欧式进口水晶玻</div>
+                                                        <div>{{scope.row.goodsName}}</div>
                                                         <div class="text">
-                                                            颜色：白色  数量：6只装
+                                                            {{scope.row.featureValue}}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </template>
-                                    </el-table-column>
+                                    </el-table-column>                                  
                                     <el-table-column
-                                        prop="money"
-                                        label="退款方式"
-                                        width="100"
-                                        align="center">
-                                        <template :slot-scope="scope">
-                                            <div>仅退款</div>
-                                        </template>
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="money"
+                                        prop="paymentAmount"
                                         label="订单金额"
-                                        width="100"
                                         align="center">
-                                        <template :slot-scope="scope">
-                                            <div>¥1000.00</div>
-                                        </template>
                                     </el-table-column>
                                     <el-table-column
-                                        prop="money"
+                                        prop="refundAmount"
                                         label="退款金额"
-                                        width="100"
                                         align="center">
                                         <template :slot-scope="scope">
                                             <div>¥500.00</div>
                                         </template>
                                     </el-table-column>
                                     <el-table-column
-                                        prop="money"
+                                        prop="applyTime"
                                         label="申请时间"
-                                        width="160"
                                         align="center">
-                                        <template :slot-scope="scope">
-                                            <div>2017-10-01-20:12:08</div>
-                                        </template>
                                     </el-table-column>
                                     <el-table-column
-                                        prop="money"
+                                        prop="returnsStatusName"
                                         label="退款状态"
-                                        width="100"
                                         align="center">
-                                        <template :slot-scope="scope">
-                                            <div>退款处理中</div>
-                                        </template>
                                     </el-table-column>
                                     <el-table-column
                                         prop="money"
                                         label="操作"
                                         width="100"
                                         align="center">
-                                        <template :slot-scope="scope">
-                                            <el-button type="text" size="small">同意</el-button>
-                                            <el-button type="text" size="small">拒绝</el-button>
+                                        <template slot-scope="scope">
+                                            <el-button type="text" size="small" @click="handleDetail(scope.row)">处理</el-button>
                                         </template>
                                     </el-table-column>
                                 </el-table>
                             </el-col>
-                            <el-col class="pagination">
+                            <!-- <el-col class="pagination">
                                 <el-pagination
                                     background
                                     @size-change="handleSizeChange"
@@ -204,83 +193,108 @@
                                     :total="totalPage"
                                     :page-size="total">
                                 </el-pagination>
-                            </el-col>
+                            </el-col> -->
                         </el-col>
                     </el-col>
                 </el-tab-pane>
-                <el-tab-pane label="待付款" name="2"></el-tab-pane>
+                <!-- <el-tab-pane label="待付款" name="2"></el-tab-pane>
                 <el-tab-pane label="待发货" name="3"></el-tab-pane>
                 <el-tab-pane label="已发货" name="4"></el-tab-pane>
                 <el-tab-pane label="已完成" name="5"></el-tab-pane>
                 <el-tab-pane label="已关闭" name="6"></el-tab-pane>
-                <el-tab-pane label="退款中" name="7"></el-tab-pane>
+                <el-tab-pane label="退款中" name="7"></el-tab-pane> -->
             </el-tabs>
         </div>
     </div>
 </template>
 
 <script >
+import {returnsList} from 'api/order'
+import {fromDate} from 'utils/utils'
 
-    export default {
-        data() {
-            return {
-                activeName: '1',
-                number: '',
-                time: '',
-                pickerOptions: {
-                    shortcuts: [{
-                        text: '最近一周',
-                        onClick(picker) {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                        picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近一个月',
-                        onClick(picker) {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                        picker.$emit('pick', [start, end]);
-                        }
-                    }, {
-                        text: '最近三个月',
-                        onClick(picker) {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                        picker.$emit('pick', [start, end]);
-                        }
-                    }]
-                },
-                id: '',
-                pay: '',
-                intervention: '',
-                refund: '',
-                types: '',
-                totalPage: 100,
-                total: 10,
-                tableData: [{
-                    id:'336857312'
-                },{
-                    id:'336857312'
-                }]//测试数据
-            }
-        },
-        mounted() {
-        },
-
-        methods: {
-            handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);               
+export default {
+    data() {
+        return {
+            activeName: '1',
+            orderCode: '',//订单号
+            time: '',
+            pickerOptions: {
+                shortcuts: [{
+                    text: '最近一周',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近一个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }, {
+                    text: '最近三个月',
+                    onClick(picker) {
+                    const end = new Date();
+                    const start = new Date();
+                    start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                    picker.$emit('pick', [start, end]);
+                    }
+                }]
             },
-            handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
-            }
-            
+            returnsCode: '', //退款编号
+            returnsType: '', //退款类型
+            intervention: '',
+            types: '',
+            totalPage: 100,
+            total: 10,
+            ordersList: [], //退款列表
+            requestType: '',
+        }
+    },
+    mounted() {
+        this.getReturnsList();
+    },
+    methods: {
+        handleSizeChange(val) {
+            console.log(`每页 ${val} 条`);               
         },
-    }
+        handleCurrentChange(val) {
+            console.log(`当前页: ${val}`);
+        },
+        //获取退款列表
+        getReturnsList() {
+            returnsList({}).then(res => {
+                if (res.data.code === '0') {
+                    this.ordersList = res.data.data.orders
+                }
+            })
+        },
+        //搜索
+        serachReturnsList() {
+            let orderCode = this.orderCode;
+            let applyStartTime = this.time[0]===undefined?'':fromDate(this.time[0]);
+            let applyEndTime = this.time[1]===undefined?'':fromDate(this.time[1]);
+            let returnsCode = this.returnsCode;
+            let returnsType = this.returnsType;
+            let requestType = this.requestType;
+
+            returnsList({orderCode,applyStartTime,applyEndTime,returnsCode,returnsType,requestType}).then(res => {
+                if (res.data.code === '0') {
+                    this.ordersList = res.data.data.orders
+                }
+            })
+        },
+        //详情
+        handleDetail(row) {
+            let returnsId = row.returnsId;
+            this.$router.push({path:'/admin/afterSaleDetail',query:{returnsId}})
+        }
+    },
+}
 </script>
 
 

@@ -165,3 +165,131 @@ export const orderMemo = ({orderId,markColor,markName,markType='COLOR',memo}) =>
     }
     return http.post('/order/memo',data)
 }
+
+/**
+*---------------------------------------------------------
+* @name: 售后管理-退款列表
+* @description: 退款列表
+* 
+*---------------------------------------------------------
+*/
+export const returnsList = ({orderCode,applyStartTime,applyEndTime,returnsCode,returnsType,requestType}) => {
+    let params = {
+        client_id,client_secret,sign,timestamp,v,orderCode,applyStartTime,applyEndTime,returnsCode,returnsType,requestType
+    }
+    return http.get('/returns/list',{params})
+}
+
+/**
+*---------------------------------------------------------
+* @name: 售后管理-退款详情
+* @description: 退款详情
+* 
+*---------------------------------------------------------
+*/
+export const returnsDetail = ({returnsId}) => {
+    let params = {
+        client_id,client_secret,sign,timestamp,v,returnsId
+    }
+    return http.get('/returns/detail',{params})
+}
+
+/**
+*---------------------------------------------------------
+* @name: 售后管理-留言
+* @description: 留言
+* 
+*---------------------------------------------------------
+*/
+export const returnsComments = ({description,images,returnsId}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,description,images,returnsId
+    }
+    return http.post('/returns/comments',data)
+}
+
+/**
+*---------------------------------------------------------
+* @name: 售后管理-拒绝退款
+* @description: 拒绝退款
+* @param{String}: reasonType  GOODS_DAMAGE 商品损坏
+* 
+*---------------------------------------------------------
+*/
+export const returnsRefuse = ({description,returnsId,images,reasonType}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,description,returnsId,images,reasonType
+    }
+    return http.post('/returns/refuse',data)
+}
+
+/**
+*---------------------------------------------------------
+* @name: 售后管理-同意退款
+* @description: 仅退款申请
+* 
+*---------------------------------------------------------
+*/
+export const returnsRefund = ({password,returnsId}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,password,returnsId
+    }
+    return http.post('/returns/refund',data)
+}
+
+/**
+*---------------------------------------------------------
+* @name: 售后管理-同意退款
+* @description: 退货退款处理
+* 
+*---------------------------------------------------------
+*/
+export const returnsAgree = ({addressId,description,returnsId}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,addressId,description,returnsId
+    }
+    return http.post('/returns/agree',data)
+}
+
+/**
+*---------------------------------------------------------
+* @name: 评价管理-评论列表
+* @description: 评论列表
+* 
+*---------------------------------------------------------
+*/
+export const commentList = () => {
+    let params = {
+        client_id,client_secret,sign,timestamp,v
+    }
+    return http.get('/comment/list',{params})
+}
+
+/**
+*---------------------------------------------------------
+* @name: 评价管理-评论详情
+* @description: 评论详情
+* 
+*---------------------------------------------------------
+*/
+export const commentInfo = ({commentId}) => {
+    let params = {
+        client_id,client_secret,sign,timestamp,v,commentId
+    }
+    return http.get('/comment/info',{params})
+}
+
+/**
+*---------------------------------------------------------
+* @name: 评价管理-回复评价
+* @description: 回复评价
+* 
+*---------------------------------------------------------
+*/
+export const commentReply = ({commentId,content,score}) => {
+    let data = {
+        client_id,client_secret,sign,timestamp,v,commentId,content,score
+    }
+    return http.post('/comment/reply',data)
+}
+
